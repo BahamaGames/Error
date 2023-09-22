@@ -23,10 +23,10 @@ new Error(message, script, lineNumber)
 */
 
 /// @function Error()
-/// @param {string} message A human-readable description of the error.
-/// @param {struct} options An object that has the following properties: cause Optional A value indicating the specific cause of the error, reflected in the cause property. When catching and re-throwing an error with a more-specific or useful error message, this property can be used to pass the original error.
-/// @param {string} script The path to the file that raised this error, reflected in the script property. Defaults to the name of the file containing the code that called the Error() constructor.
-/// @param {real}	lineNumber The line number within the file on which the error was raised, reflected in the lineNumber property. Defaults to the line number containing the Error() constructor invocation.
+/// @param {string} message		A human-readable description of the error.
+/// @param {struct}	options		An object that has the following properties: longMessage Optional A string value indicating to exact cause of the message, may also contain the brift message passed.
+/// @param {string} script		The script/event that raised this error, reflected in the script property. Defaults to the name of the script/event containing the code that called the Error() constructor.
+/// @param {real}	lineNumber	The line number within the script/event on which the error was raised, reflected in the lineNumber property. Defaults to the line number containing the Error() constructor invocation.
 function Error(a = undefined, b = undefined, c = undefined) constructor
 {	
 	static name			= "Error";
@@ -100,7 +100,6 @@ function Error(a = undefined, b = undefined, c = undefined) constructor
 	//init the global var options if doesnt exists already
 	if(!variable_global_exists("__error_opts")) global.__error_opts = 
 	{
-		cause			: {default_: undefined, isValid: is_struct, message: "cause should be a struct"},
 		longMessage		: {default_: undefined, isValid: is_string, message: "longMessage should be a string"},
 	}
 }
