@@ -2,7 +2,7 @@
 by		: BAHAMAGAMES / rickky
 GMail	: bahamagames@gmail.com 
 Discord	: rickky#1696
-GitHub	: https://github.com/BahamaGames
+GitHub	: https://github.com/BahamaGames/Error
 */
 
 // Feather disable GM2017

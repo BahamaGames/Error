@@ -2,7 +2,7 @@
 by		: BAHAMAGAMES / rickky
 GMail	: bahamagames@gmail.com 
 Discord	: rickky#1696
-GitHub	: https://github.com/BahamaGames
+GitHub	: https://github.com/BahamaGames/Error
 
 Credits : https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/Error
 */
@@ -30,28 +30,78 @@ new Error(message, script, lineNumber)
 function Error(a = undefined, b = undefined, c = undefined) constructor
 {	
 	static name			= "Error";
+	
+	//init the global var options if doesnt exists already
+	if(!variable_global_exists("__error_opts")) global.__error_opts = 
+	{
+		longMessage		: {default_: undefined, isValid: is_string, message: "longMessage should be a string"},
+	}
+	
 	message				= a ?? name;
 	script				= undefined;
 	stacktrace			= debug_get_callstack();
 	lineNumber			= undefined;
-	
-	var ___options		= {};
 	
 	if(b != undefined)
 	{
 		var ___type		= typeof(b);
 		
 		//check if options
-		if(___type == "struct") bg_validate_options(global.__error_opts, b, "options", true, function(k, v){if(v != undefined) self[$ k] = v;});
+		if(___type == "struct") 
+		{
+			if(typeof(b) != "struct") 
+			{
+				var e			= new Error($"Expected options to be a struct");
+				e.name			= "TypeError";
+				throw e;
+			}
+			
+			var ___names		= struct_get_names(global.__error_opts);
+	
+			for(var i = array_length(___names) - 1; i >= 0; --i)
+			{
+				var ___key		= ___names[i];
+		
+				//temp fix for html injecting _Struct key into structs
+				if(string_count("_struct_", ___key)) continue;
+		
+				var
+				___value		= b[$ ___key],
+				___validator	= global.__error_opts[$ ___key];
+		
+				if(___value == undefined) 
+				{
+					var d		= ___validator.default_;
+					___value	= !is_callable(d)? d: d();
+				}
+		
+				if(!___validator.isValid(___value)) 
+				{
+					var e		= new Error(___validator.message);
+					e.name		= "TypeError";
+					throw e;
+				}
+				
+				self[$ ___key]	= ___value;
+			}
+		}
 		else if(___type == "string") script = b;
-		else throw new TypeError("Invalid 'argument[1]' should be options: struct, or script: string");
+		else {
+			var e		= new Error("Invalid 'argument[1]' should be options: struct, or script: string");
+			e.name		= "TypeError";
+			throw e;
+		}
 		
 		if(c != undefined) 
 		{
 			___type		= typeof(c);
 			
 			if(___type == "number") lineNumber = c;
-			else throw new TypeError("Invalid 'argument[2] lineNumber' should a number");
+			else {
+				var e	= Error("Invalid 'argument[2] lineNumber' should a number");
+				e.name	= "TypeError";
+				throw e;
+			}
 		}
 	}
 	
@@ -96,10 +146,4 @@ function Error(a = undefined, b = undefined, c = undefined) constructor
 	
 	/// @function toString()
 	static toString		= function(){return $"{name}: {message}";}
-	
-	//init the global var options if doesnt exists already
-	if(!variable_global_exists("__error_opts")) global.__error_opts = 
-	{
-		longMessage		: {default_: undefined, isValid: is_string, message: "longMessage should be a string"},
-	}
 }
